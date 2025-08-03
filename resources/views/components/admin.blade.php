@@ -103,8 +103,7 @@
     </div>
     <!-- ./wrapper -->
     <footer class="main-footer">
-        <strong>Copyright © 2023-{{ date('Y') }} <a href="nihirz.netlify.app">Zala
-                Nihir</a>.</strong> All rights reserved.
+        <strong>Copyright © {{ date('Y') }} <a href="https://sts.institute/">STS Institute</a>.</strong> All rights reserved.
     </footer>
     <!-- ./wrapper -->
 

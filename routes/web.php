@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\LoginWithOTPController;
 use App\Http\Controllers\SocialiteController;
+use App\Http\Controllers\FrontendBookingController;
+use App\Http\Controllers\WelcomeController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 /*
@@ -15,13 +17,26 @@ use Illuminate\Support\Str;
 |
 */
 
-Route::get('/', function () {
-    $readmePath = base_path('README.md');
 
-    return view('welcome', [
-        'readmeContent' => Str::markdown(file_get_contents($readmePath)),
-    ]);
-});
+Route::get('/', [FrontendBookingController::class, 'welcome'])->name('welcome');
+
+Route::post('/check-seat', [FrontendBookingController::class, 'checkSeatAvailability'])
+    ->name('booking.check-seat');
+    
+Route::post('/book-seat', [FrontendBookingController::class, 'bookSeat'])
+    ->name('booking.book-seat');
+    
+Route::post('/check-student', [FrontendBookingController::class, 'checkStudentExists'])
+    ->name('booking.check-student');
+
+// // Welcome Page with Booking Form
+// Route::get('/', [FrontendBookingController::class, 'welcome'])->name('welcome');
+
+// // Booking Processing Routes
+// Route::post('/booking/check-seat', [FrontendBookingController::class, 'checkSeatAvailability'])->name('booking.check-seat');
+// Route::post('/booking/book-seat', [FrontendBookingController::class, 'bookSeat'])->name('booking.book-seat');
+// Route::post('/booking/check-student', [FrontendBookingController::class, 'checkStudentExists'])->name('booking.check-student');
+
 // Login with OTP Routes
 Route::prefix('/otp')->middleware('guest')->name('otp.')->controller(LoginWithOTPController::class)->group(function(){
     Route::get('/login','login')->name('login');

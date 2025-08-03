@@ -34,7 +34,7 @@
                     </p>
                 </a>
             </li>
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a href="{{ route('admin.category.index') }}"
                     class="nav-link {{ Route::is('admin.category.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-list-alt"></i>
@@ -42,8 +42,8 @@
                         <span class="badge badge-warning right">{{ $CategoryCount }}</span>
                     </p>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a href="{{ route('admin.subcategory.index') }}"
                     class="nav-link {{ Route::is('admin.subcategory.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-list"></i>
@@ -51,8 +51,8 @@
                         <span class="badge badge-secondary right">{{ $SubCategoryCount }}</span>
                     </p>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a href="{{ route('admin.collection.index') }}"
                     class="nav-link {{ Route::is('admin.collection.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-file-pdf"></i>
@@ -60,8 +60,8 @@
                         <span class="badge badge-primary right">{{ $CollectionCount }}</span>
                     </p>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a href="{{ route('admin.product.index') }}"
                     class="nav-link {{ Route::is('admin.product.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-th"></i>
@@ -69,7 +69,39 @@
                         <span class="badge badge-warning right">{{ $ProductCount }}</span>
                     </p>
                 </a>
-            </li>
+            </li> -->
+            @php 
+               $StudentCount = \App\Models\Student::count();
+             
+            @endphp
+            <li class="nav-item">
+            <a href="{{ route('admin.student.index') }}" 
+            class="nav-link {{ Route::is('admin.student.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-user-graduate"></i>
+                <p>Students
+                    <span class="badge badge-info right">{{ $StudentCount }}</span>
+                </p>
+            </a>
+        </li>
+            <li class="nav-item">
+            <a href="{{ route('admin.time_slot.index') }}" 
+            class="nav-link {{ Route::is('admin.time_slot.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-clock"></i>
+                <p>Time Slots
+                </p>
+            </a>
+      
+        </li>
+
+        <li class="nav-item">
+    <a href="{{ route('admin.booking.index') }}" 
+       class="nav-link {{ Route::is('admin.booking.*') ? 'active' : '' }}">
+        <i class="nav-icon fas fa-calendar-check"></i>
+        <p>Bookings
+           
+        </p>
+    </a>
+</li>
         @endrole
         <li class="nav-item">
             <a href="{{ route('admin.profile.edit') }}"

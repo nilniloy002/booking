@@ -3,32 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>STS Institute | IELTS Computer Lab Booking System - Reserve Your Seat Online</title>
-    
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="STS Institute | IELTS Computer Lab Booking System - Reserve Your Seat Online">
-    <meta name="description" content="Book your IELTS computer lab session at STS Institute. Reserve seats online for convenient practice and testing sessions with our state-of-the-art facilities.">
-    <meta name="keywords" content="IELTS, computer lab, STS Institute, seat booking, test preparation, English test, IELTS practice, lab reservation">
-    <meta name="author" content="STS Institute">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://cdielts.sts.institute/booking">
-    <meta property="og:title" content="STS Institute | IELTS Computer Lab Booking System">
-    <meta property="og:description" content="Reserve your IELTS computer lab session online at STS Institute">
-    <meta property="og:image" content="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://cdielts.sts.institute/booking">
-    <meta property="twitter:title" content="STS Institute | IELTS Computer Lab Booking System">
-    <meta property="twitter:description" content="Reserve your IELTS computer lab session online at STS Institute">
-    <meta property="twitter:image" content="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://cdielts.sts.institute/wp-content/uploads/2025/07/cropped-favicon-01.jpg">
-    
+    <title>Seat Booking System</title>
     <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for icons -->
@@ -44,11 +19,10 @@
             align-items: center;
             justify-content: center;
             font-weight: 500;
-            position: relative;
         }
         .seat.available:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 8px #f3802080;
+            box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
         }
         .seat.booked {
             opacity: 0.7;
@@ -68,35 +42,23 @@
             min-height: 300px;
         }
         .date-btn.active {
-            background-color: #ed2227;
+            background-color: #3b82f6;
             color: white;
-            border-color: #ed2227;
-        }
-        .laptop-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 18px;
-        }
-        .seat-number {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            font-size: 10px;
-            font-weight: bold;
+            border-color: #1d4ed8;
         }
     </style>
 </head>
 <body class="bg-gray-50">
-  <!-- Header -->
-    <header class="bg-[#1C2A39] text-white shadow-md">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex flex-col items-center justify-center">
-                <img src="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png" 
-                     alt="CD-IELTS Logo" 
-                     class="h-16 mb-2">
-                <h1 class="text-2xl font-bold text-center">IELTS on Computer LAB Booking System</h1>
+    <!-- Header -->
+    <header class="bg-blue-600 text-white shadow-md">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold">Seat Booking System</h1>
+                <div class="space-x-4">
+                    <a href="{{ route('login') }}" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+                        Admin Login
+                    </a>
+                </div>
             </div>
         </div>
     </header>
@@ -125,7 +87,7 @@
                             data-date="{{ $date }}"
                         >
                             <span class="font-medium block">{{ $label }}</span>
-                            <span class="text-sm text-black-bold">{{ \Carbon\Carbon::parse($date)->format('D, M j') }}</span>
+                            <span class="text-sm text-gray-600">{{ \Carbon\Carbon::parse($date)->format('D, M j') }}</span>
                         </button>
                     @endforeach
                 </div>
@@ -169,7 +131,7 @@
                         <span id="selectedSlotInfo" class="font-medium"></span>
                     </div>
                     <div class="flex items-center">
-                        <div class="w-3 h-3 bg-blue-900 rounded-full mr-2"></div>
+                        <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
                         <span id="selectedSeatInfo" class="font-medium"></span>
                     </div>
                 </div>
@@ -199,7 +161,7 @@
                     <button 
                         type="submit" 
                         id="submitBtn"
-                        class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-colors flex items-center justify-center"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center justify-center"
                     >
                         <span id="submitBtnText">Confirm Booking</span>
                     </button>
@@ -211,7 +173,7 @@
     <!-- Footer -->
     <footer class="bg-gray-800 text-white py-6 mt-12">
         <div class="container mx-auto px-4 text-center">
-            <p>&copy; {{ date('Y') }} CD-IELTS LAB Booking System. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Seat Booking System. All rights reserved.</p>
         </div>
     </footer>
 
@@ -233,10 +195,10 @@ $(document).ready(function() {
         });
         
         // Update UI
-        $('.date-btn').removeClass('active bg-blue-900 text-white border-blue-900')
+        $('.date-btn').removeClass('active bg-blue-600 text-white border-blue-700')
                       .addClass('bg-gray-100 text-gray-800 hover:bg-gray-200');
         $(this).removeClass('bg-gray-100 hover:bg-gray-200 text-gray-800')
-               .addClass('active bg-blue-900 text-white border-blue-900');
+               .addClass('active bg-blue-600 text-white border-blue-700');
         
         // Show selected date
         $('#selectedDateDisplay').text(formattedDate);
@@ -246,7 +208,7 @@ $(document).ready(function() {
         $('#timeSlotsContainer').removeClass('hidden');
     });
     
-    function loadTimeSlots(date) {
+function loadTimeSlots(date) {
         console.log('Loading slots for date:', date);
 
         // Show loading state
@@ -265,36 +227,26 @@ $(document).ready(function() {
                 date: date
             },
             success: function(response) {
-                console.log('API response:', response);
+                console.log('Full API response:', JSON.parse(JSON.stringify(response)));
                 
-                // Check for Friday/Saturday restriction
-                if (response.message && response.message.includes('not available')) {
-                    $('#timeSlotsGrid').html(`
-                        <div class="col-span-full text-center py-8 text-gray-500">
-                            <i class="fas fa-calendar-times fa-2x mb-3"></i>
-                            <p>${response.message}</p>
-                            <p class="text-sm mt-2">Please select a different date.</p>
-                        </div>
-                    `);
-                    return;
-                }
-                
-                // Check if no time slots are available
                 if (!response.timeSlots || response.timeSlots.length === 0) {
-                    let message = response.message || 'No time slots available for selected date';
                     $('#timeSlotsGrid').html(`
                         <div class="col-span-full text-center py-8 text-gray-500">
                             <i class="fas fa-calendar-times fa-2x mb-3"></i>
-                            <p>${message}</p>
+                            <p>No time slots available for selected date</p>
                         </div>
                     `);
                     return;
                 }
 
-                // Display available time slots
                 let timeSlotsHtml = '';
                 
                 response.timeSlots.forEach(slot => {
+                    console.log('Processing slot:', slot.time_slot, 'Bookings:', slot.bookings);
+                    
+                    // Ensure bookings is always treated as an array
+                    const bookings = Array.isArray(slot.bookings) ? slot.bookings : [];
+                    
                     timeSlotsHtml += `
                         <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
                             <h3 class="font-medium text-lg mb-3 text-gray-800">
@@ -306,25 +258,23 @@ $(document).ready(function() {
                     
                     // Generate 15 seats
                     for (let seat = 1; seat <= 15; seat++) {
-                        const isBooked = slot.bookings.some(b => b.seat === seat);
-                        const bookingInfo = slot.bookings.find(b => b.seat === seat);
+                        const isBooked = bookings.some(b => b.seat === seat);
+                        const bookingInfo = bookings.find(b => b.seat === seat);
                         
                         if (isBooked) {
                             timeSlotsHtml += `
-                                <div class="seat booked bg-red-600 text-[#ffffff] rounded cursor-not-allowed relative"
+                                <div class="seat booked bg-red-500 text-white text-center p-2 rounded cursor-not-allowed"
                                      title="Booked by ${bookingInfo?.std_id || 'another student'}">
-                                    <i class="fas fa-laptop laptop-icon"></i>
-                                    <span class="seat-number">${seat}</span>
+                                    ${seat}
                                 </div>
                             `;
                         } else {
                             timeSlotsHtml += `
-                                <div class="seat available bg-green-500 text-white rounded cursor-pointer relative"
+                                <div class="seat available bg-green-500 text-white text-center p-2 rounded cursor-pointer"
                                      data-seat="${seat}" 
                                      data-time-slot="${slot.id}"
                                      data-time-slot-name="${slot.time_slot}">
-                                    <i class="fas fa-laptop laptop-icon"></i>
-                                    <span class="seat-number">${seat}</span>
+                                    ${seat}
                                 </div>
                             `;
                         }
@@ -378,59 +328,60 @@ $(document).ready(function() {
             }
         });
     }
-    
-    // Student ID validation
-    $('#studentId').on('blur', function() {
-        const studentId = $(this).val().trim();
-        if (studentId) {
-            checkStudentExists(studentId);
-        } else {
-            $('#studentMessage').text('').removeClass('text-green-600 text-red-600');
-        }
-    });
-    
-    function checkStudentExists(studentId) {
-        $('#studentMessage').text('Checking...').removeClass('text-green-600 text-red-600').addClass('text-gray-600');
+
+        // Student ID validation
+        $('#studentId').on('blur', function() {
+            const studentId = $(this).val().trim();
+            if (studentId) {
+                checkStudentExists(studentId);
+            } else {
+                $('#studentMessage').text('').removeClass('text-green-600 text-red-600');
+            }
+        });
         
-        $.ajax({
-            url: '{{ route("booking.check-student") }}',
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                std_id: studentId
-            },
-            success: function(data) {
-                if (data.exists) {
-                    $('#studentMessage').text(`Valid student: ${data.student_name}`)
-                                      .removeClass('text-gray-600 text-red-600')
-                                      .addClass('text-green-600');
-                } else {
-                    $('#studentMessage').text('Student ID not found in database')
+        function checkStudentExists(studentId) {
+            $('#studentMessage').text('Checking...').removeClass('text-green-600 text-red-600').addClass('text-gray-600');
+            
+            $.ajax({
+                url: '{{ route("booking.check-student") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    std_id: studentId
+                },
+                success: function(data) {
+                    if (data.exists) {
+                        $('#studentMessage').text(`Valid student: ${data.student_name}`)
+                                          .removeClass('text-gray-600 text-red-600')
+                                          .addClass('text-green-600');
+                    } else {
+                        $('#studentMessage').text('Student ID not found in database')
+                                          .removeClass('text-gray-600 text-green-600')
+                                          .addClass('text-red-600');
+                    }
+                },
+                error: function() {
+                    $('#studentMessage').text('Error checking student ID')
                                       .removeClass('text-gray-600 text-green-600')
                                       .addClass('text-red-600');
                 }
-            },
-            error: function() {
-                $('#studentMessage').text('Error checking student ID')
-                                  .removeClass('text-gray-600 text-green-600')
-                                  .addClass('text-red-600');
+            });
+        }
+        
+        // Modal controls
+        $('#cancelBooking, #cancelBookingBtn').on('click', function() {
+            $('#bookingModal').addClass('hidden');
+        });
+        
+        // Close modal when clicking outside
+        $('#bookingModal').on('click', function(e) {
+            if (e.target === this) {
+                $(this).addClass('hidden');
             }
         });
-    }
-    
-    // Modal controls
-    $('#cancelBooking, #cancelBookingBtn').on('click', function() {
-        $('#bookingModal').addClass('hidden');
-    });
-    
-    // Close modal when clicking outside
-    $('#bookingModal').on('click', function(e) {
-        if (e.target === this) {
-            $(this).addClass('hidden');
-        }
-    });
-    
-    // Form submission
+        
+        // Form submission
+  // Booking form submission handler
     $('#bookSeatForm').on('submit', function(e) {
         e.preventDefault();
         
@@ -463,6 +414,7 @@ $(document).ready(function() {
                 loadTimeSlots($('#modalDate').val());
             },
             error: function(xhr) {
+                // let errorMessage = 'An error occurred while processing your booking';
                 let errorMessage = 'You already booked on this date';
                 if (xhr.responseJSON && xhr.responseJSON.error) {
                     errorMessage = xhr.responseJSON.error;
@@ -482,7 +434,7 @@ $(document).ready(function() {
             }
         });
     });
-});
+    });
     </script>
 </body>
 </html>

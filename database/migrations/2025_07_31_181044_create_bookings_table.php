@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+       Schema::create('bookings', function (Blueprint $table) {
+            $table->id();
+            $table->date('date');
+            $table->foreignId('time_slot_id')->constrained('time_slots');
+            $table->integer('seat')->unsigned();
+            $table->string('std_id');
+            $table->enum('status', ['on', 'off'])->default('on');
+            $table->timestamps();
+            
+            // Unique constraint to prevent duplicate bookings
+            $table->unique(['date', 'time_slot_id', 'seat']);
+            $table->unique(['date', 'std_id']);
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('bookings');
+    }
+};
