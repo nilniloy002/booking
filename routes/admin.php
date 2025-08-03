@@ -25,6 +25,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'verified'])->group(
     Route::post('booking/check', [BookingController::class, 'checkStudentBooking'])->name('booking.check');
     Route::post('booking/seats', [BookingController::class, 'getSeatAvailability'])->name('booking.seats');
     Route::post('booking/check-student', [BookingController::class, 'checkStudentExists'])->name('booking.check-student');
+    Route::get('student/import', [StudentController::class, 'importForm'])->name('student.import.form');
+    Route::post('student/import', [StudentController::class, 'import'])->name('student.import');
+
     
     Route::middleware(['role:admin'])->group(function(){
         Route::resource('user',UserController::class);

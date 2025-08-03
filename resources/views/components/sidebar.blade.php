@@ -7,7 +7,7 @@
             </a>
         </li>
         @role('admin')
-            <li class="nav-item">
+            <!-- <li class="nav-item">
                 <a href="{{ route('admin.user.index') }}"
                     class="nav-link {{ Route::is('admin.user.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-user"></i>
@@ -15,8 +15,8 @@
                         <span class="badge badge-info right">{{ $userCount }}</span>
                     </p>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a href="{{ route('admin.role.index') }}"
                     class="nav-link {{ Route::is('admin.role.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-user-tag"></i>
@@ -24,8 +24,8 @@
                         <span class="badge badge-success right">{{ $RoleCount }}</span>
                     </p>
                 </a>
-            </li>
-            <li class="nav-item">
+            </li> -->
+            <!-- <li class="nav-item">
                 <a href="{{ route('admin.permission.index') }}"
                     class="nav-link {{ Route::is('admin.permission.index') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-hat-cowboy"></i>
@@ -33,7 +33,7 @@
                         <span class="badge badge-danger right">{{ $PermissionCount }}</span>
                     </p>
                 </a>
-            </li>
+            </li> -->
             <!-- <li class="nav-item">
                 <a href="{{ route('admin.category.index') }}"
                     class="nav-link {{ Route::is('admin.category.index') ? 'active' : '' }}">
@@ -92,17 +92,18 @@
             </a>
       
         </li>
-
         <li class="nav-item">
-    <a href="{{ route('admin.booking.index') }}" 
-       class="nav-link {{ Route::is('admin.booking.*') ? 'active' : '' }}">
-        <i class="nav-icon fas fa-calendar-check"></i>
-        <p>Bookings
-           
-        </p>
-    </a>
-</li>
+            <a href="{{ route('admin.booking.index') }}" 
+            class="nav-link {{ Route::is('admin.booking.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-calendar-check"></i>
+                <p>Bookings
+                
+                </p>
+            </a>
+        </li>
+        
         @endrole
+
         <li class="nav-item">
             <a href="{{ route('admin.profile.edit') }}"
                 class="nav-link {{ Route::is('admin.profile.edit') ? 'active' : '' }}">

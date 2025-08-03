@@ -10,10 +10,29 @@ use Illuminate\Support\Facades\DB;
 
 class BookingController extends Controller
 {
-    public function index()
+   public function index(Request $request)
     {
-        $bookings = Booking::with('timeSlot')->latest()->get();
-        return view('admin.booking.index', compact('bookings'));
+        $query = Booking::with('timeSlot')->latest();
+        
+        // Date filter
+        if ($request->has('date') && !empty($request->date)) {
+            $query->where('date', $request->date);
+        }
+        
+        // Time Slot filter
+        if ($request->has('time_slot_id') && !empty($request->time_slot_id)) {
+            $query->where('time_slot_id', $request->time_slot_id);
+        }
+        
+        // Student ID filter
+        if ($request->has('std_id') && !empty($request->std_id)) {
+            $query->where('std_id', 'like', '%'.$request->std_id.'%');
+        }
+        
+        $bookings = $query->get();
+        $timeSlots = TimeSlot::where('status', 'on')->get();
+        
+        return view('admin.booking.index', compact('bookings', 'timeSlots'));
     }
 
     public function create()

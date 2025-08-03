@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Imports\StudentsImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StudentController extends Controller
 {
@@ -93,5 +95,27 @@ class StudentController extends Controller
         
         $student->delete();
         return redirect()->route('admin.student.index')->with('success', 'Student deleted successfully.');
+    }
+
+    public function importForm()
+    {
+        return view('admin.student.import');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        try {
+            Excel::import(new StudentsImport, $request->file('file'));
+            
+            return redirect()->route('admin.student.index')
+                ->with('success', 'Students imported successfully.');
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Error importing students: ' . $e->getMessage());
+        }
     }
 }

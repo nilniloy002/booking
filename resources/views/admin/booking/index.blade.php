@@ -8,6 +8,47 @@
             </div>
         </div>
         <div class="card-body">
+            <!-- Filter Form -->
+            <form method="GET" action="{{ route('admin.booking.index') }}" class="mb-4">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" name="date" id="date" class="form-control" 
+                                   value="{{ request('date') }}">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="time_slot_id">Time Slot</label>
+                            <select name="time_slot_id" id="time_slot_id" class="form-control">
+                                <option value="">All Time Slots</option>
+                                @foreach($timeSlots as $timeSlot)
+                                    <option value="{{ $timeSlot->id }}" 
+                                        {{ request('time_slot_id') == $timeSlot->id ? 'selected' : '' }}>
+                                        {{ $timeSlot->time_slot }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="std_id">Student ID</label>
+                            <input type="text" name="std_id" id="std_id" class="form-control" 
+                                   value="{{ request('std_id') }}" placeholder="Enter Student ID">
+                        </div>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="{{ route('admin.booking.index') }}" class="btn btn-secondary ml-2">Reset</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Bookings Table -->
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -21,7 +62,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($bookings as $booking)
+                    @forelse($bookings as $booking)
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $booking->date->format('Y-m-d') }}</td>
@@ -37,7 +78,11 @@
                                 </form>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="7" class="text-center">No bookings found</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>

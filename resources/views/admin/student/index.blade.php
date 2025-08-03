@@ -5,6 +5,7 @@
             <h3 class="card-title">Student List</h3>
             <div class="card-tools">
                 <a href="{{ route('admin.student.create') }}" class="btn btn-sm btn-info">New</a>
+                <a href="{{ route('admin.student.import.form') }}" class="btn btn-sm btn-success ml-2">Import</a>
             </div>
         </div>
         <div class="card-body">

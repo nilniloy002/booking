@@ -14,14 +14,14 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://cdielts.sts.institute/booking">
+    <meta property="og:url" content="https://booking.sts.institute">
     <meta property="og:title" content="STS Institute | IELTS Computer Lab Booking System">
     <meta property="og:description" content="Reserve your IELTS computer lab session online at STS Institute">
-    <meta property="og:image" content="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png">
+    <meta property="og:image" content="https://cdielts.sts.institute/wp-content/uploads/2025/07/cropped-favicon-01.jpg">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://cdielts.sts.institute/booking">
+    <meta property="twitter:url" content="https://booking.sts.institute">
     <meta property="twitter:title" content="STS Institute | IELTS Computer Lab Booking System">
     <meta property="twitter:description" content="Reserve your IELTS computer lab session online at STS Institute">
     <meta property="twitter:image" content="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png">
