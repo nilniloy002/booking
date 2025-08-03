@@ -204,6 +204,9 @@
                         <span id="submitBtnText">Confirm Booking</span>
                     </button>
                 </div>
+
+                <div id="bookingStatusMessage" class="hidden mt-4 p-3 rounded-lg"></div>
+
             </form>
         </div>
     </div>
@@ -431,57 +434,117 @@ $(document).ready(function() {
     });
     
     // Form submission
-    $('#bookSeatForm').on('submit', function(e) {
-        e.preventDefault();
+    // $('#bookSeatForm').on('submit', function(e) {
+    //     e.preventDefault();
         
-        const submitBtn = $('#submitBtn');
-        const originalBtnText = submitBtn.html();
+    //     const submitBtn = $('#submitBtn');
+    //     const originalBtnText = submitBtn.html();
         
-        submitBtn.prop('disabled', true);
-        submitBtn.html(`
-            <i class="fas fa-spinner animate-spin mr-2"></i>
-            Processing...
-        `);
+    //     submitBtn.prop('disabled', true);
+    //     submitBtn.html(`
+    //         <i class="fas fa-spinner animate-spin mr-2"></i>
+    //         Processing...
+    //     `);
         
-        $.ajax({
-            url: '{{ route("booking.book-seat") }}',
-            method: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#messageContainer').removeClass('hidden bg-red-100 border-red-500 text-red-700')
-                                    .addClass('bg-green-100 border-l-4 border-green-500 text-green-700')
-                                    .html(`
-                                        <div class="flex items-center">
-                                            <i class="fas fa-check-circle mr-2"></i>
-                                            <p>${response.success}</p>
-                                        </div>
-                                    `);
+    //     $.ajax({
+    //         url: '{{ route("booking.book-seat") }}',
+    //         method: 'POST',
+    //         data: $(this).serialize(),
+    //         success: function(response) {
+    //             $('#messageContainer').removeClass('hidden bg-red-100 border-red-500 text-red-700')
+    //                                 .addClass('bg-green-100 border-l-4 border-green-500 text-green-700')
+    //                                 .html(`
+    //                                     <div class="flex items-center">
+    //                                         <i class="fas fa-check-circle mr-2"></i>
+    //                                         <p>${response.success}</p>
+    //                                     </div>
+    //                                 `);
                 
+    //             $('#bookingModal').addClass('hidden');
+                
+    //             // Refresh the slots after booking
+    //             loadTimeSlots($('#modalDate').val());
+    //         },
+    //         error: function(xhr) {
+    //             let errorMessage = 'You already booked on this date';
+    //             if (xhr.responseJSON && xhr.responseJSON.error) {
+    //                 errorMessage = xhr.responseJSON.error;
+    //             }
+                
+    //             $('#messageContainer').removeClass('hidden bg-green-100 border-green-500 text-green-700')
+    //                                 .addClass('bg-red-100 border-l-4 border-red-500 text-red-700')
+    //                                 .html(`
+    //                                     <div class="flex items-center">
+    //                                         <i class="fas fa-exclamation-circle mr-2"></i>
+    //                                         <p>${errorMessage}</p>
+    //                                     </div>
+    //                                 `);
+    //         },
+    //         complete: function() {
+    //             submitBtn.prop('disabled', false).html(originalBtnText);
+    //         }
+    //     });
+    // });
+
+    // Form submission
+$('#bookSeatForm').on('submit', function(e) {
+    e.preventDefault();
+    
+    const submitBtn = $('#submitBtn');
+    const originalBtnText = submitBtn.html();
+    const statusMessage = $('#bookingStatusMessage');
+    
+    submitBtn.prop('disabled', true);
+    submitBtn.html(`
+        <i class="fas fa-spinner animate-spin mr-2"></i>
+        Processing...
+    `);
+    statusMessage.addClass('hidden').removeClass('bg-green-100 border-green-500 text-green-700 bg-red-100 border-red-500 text-red-700');
+    
+    $.ajax({
+        url: '{{ route("booking.book-seat") }}',
+        method: 'POST',
+        data: $(this).serialize(),
+        success: function(response) {
+            statusMessage.removeClass('hidden')
+                .addClass('bg-green-100 border-l-4 border-green-500 text-green-700')
+                .html(`
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <p>${response.success}</p>
+                    </div>
+                `);
+            
+            // Clear form and close modal after 2 seconds
+            setTimeout(() => {
                 $('#bookingModal').addClass('hidden');
+                $('#studentId').val('');
+                statusMessage.addClass('hidden');
                 
                 // Refresh the slots after booking
                 loadTimeSlots($('#modalDate').val());
-            },
-            error: function(xhr) {
-                let errorMessage = 'You already booked on this date';
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage = xhr.responseJSON.error;
-                }
-                
-                $('#messageContainer').removeClass('hidden bg-green-100 border-green-500 text-green-700')
-                                    .addClass('bg-red-100 border-l-4 border-red-500 text-red-700')
-                                    .html(`
-                                        <div class="flex items-center">
-                                            <i class="fas fa-exclamation-circle mr-2"></i>
-                                            <p>${errorMessage}</p>
-                                        </div>
-                                    `);
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).html(originalBtnText);
+            }, 2000);
+        },
+        error: function(xhr) {
+            let errorMessage = 'You already have a booking for this date.';
+            if (xhr.responseJSON && xhr.responseJSON.error) {
+                errorMessage = xhr.responseJSON.error;
             }
-        });
+            
+            statusMessage.removeClass('hidden')
+                .addClass('bg-red-100 border-l-4 border-red-500 text-red-700')
+                .html(`
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <p>${errorMessage}</p>
+                    </div>
+                `);
+        },
+        complete: function() {
+            submitBtn.prop('disabled', false).html(originalBtnText);
+        }
     });
+});
 });
     </script>
 </body>

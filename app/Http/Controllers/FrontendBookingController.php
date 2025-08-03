@@ -216,7 +216,7 @@ public function checkSeatAvailability(Request $request)
         ]);
     } catch (\Exception $e) {
         return response()->json([
-            'error' => 'An error occurred while processing your booking. Please try again or you are already booked for this date'
+            'error' => 'You already have a booking for this date.'
         ], 500);
     }
 }
