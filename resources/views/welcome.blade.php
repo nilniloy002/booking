@@ -89,7 +89,7 @@
     </style>
 </head>
 <body class="bg-gray-50">
-  <!-- Header -->
+    <!-- Header -->
     <header class="bg-[#1C2A39] text-white shadow-md">
         <div class="container mx-auto px-4 py-4">
             <div class="flex flex-col items-center justify-center">
@@ -120,10 +120,8 @@
                     @endphp
                     
                     @foreach($dates as $date => $label)
-                        <button 
-                            class="date-btn bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg border border-gray-300 transition-colors text-left flex flex-col"
-                            data-date="{{ $date }}"
-                        >
+                        <button class="date-btn bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg border border-gray-300 transition-colors text-left flex flex-col"
+                                data-date="{{ $date }}">
                             <span class="font-medium block">{{ $label }}</span>
                             <span class="text-sm text-black-bold">{{ \Carbon\Carbon::parse($date)->format('D, M j') }}</span>
                         </button>
@@ -131,19 +129,19 @@
                 </div>
             </div>
             
-            <!-- Time Slots and Seats -->
-            <div id="timeSlotsContainer" class="hidden mb-8">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-lg font-semibold text-gray-700">Available Time Slots</h3>
-                    <div id="selectedDateDisplay" class="text-sm text-gray-500"></div>
-                </div>
-                <div id="timeSlotsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6 seat-map-container">
-                    <!-- Time slots will be loaded here -->
-                </div>
+        <!-- Time Slots and Seats -->
+        <div id="timeSlotsContainer" class="hidden mb-8">
+            <div class="flex justify-between items-center mb-3">
+                <h3 class="text-lg font-semibold text-gray-700">Available Time Slots</h3>
+                <div id="selectedDateDisplay" class="text-sm text-gray-500"></div>
             </div>
-            
-            <!-- Messages -->
-            <div id="messageContainer" class="hidden mb-4 p-4 rounded-lg border-l-4"></div>
+            <div id="timeSlotsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Time slots will be loaded here -->
+            </div>
+        </div>
+        
+        <!-- Messages -->
+        <div id="messageContainer" class="hidden mb-4 p-4 rounded-lg border-l-4"></div>
         </div>
     </main>
 
@@ -176,37 +174,24 @@
                 
                 <div class="mb-4">
                     <label for="studentId" class="block text-gray-700 mb-2">Student ID <span class="text-red-500">*</span></label>
-                    <input 
-                        type="text" 
-                        id="studentId" 
-                        name="std_id" 
-                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                        required
-                        placeholder="Enter your student ID"
-                        autocomplete="off"
-                    >
+                    <input type="text" id="studentId" name="std_id" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                           required placeholder="Enter your student ID" autocomplete="off">
                     <div id="studentMessage" class="mt-1 text-sm"></div>
                 </div>
                 
                 <div class="flex justify-end space-x-3">
-                    <button 
-                        type="button" 
-                        id="cancelBookingBtn" 
-                        class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
-                    >
+                    <button type="button" id="cancelBookingBtn" 
+                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
                         Cancel
                     </button>
-                    <button 
-                        type="submit" 
-                        id="submitBtn"
-                        class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-colors flex items-center justify-center"
-                    >
+                    <button type="submit" id="submitBtn"
+                            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-colors flex items-center justify-center">
                         <span id="submitBtnText">Confirm Booking</span>
                     </button>
                 </div>
 
                 <div id="bookingStatusMessage" class="hidden mt-4 p-3 rounded-lg"></div>
-
             </form>
         </div>
     </div>
@@ -218,8 +203,8 @@
         </div>
     </footer>
 
-    <script>
-$(document).ready(function() {
+   <script>
+    $(document).ready(function() {
     // Initialize with today's date
     const today = new Date().toISOString().split('T')[0];
     $('.date-btn[data-date="'+today+'"]').addClass('active');
@@ -270,8 +255,8 @@ $(document).ready(function() {
             success: function(response) {
                 console.log('API response:', response);
                 
-                // Check for Friday/Saturday restriction
-                if (response.message && response.message.includes('not available')) {
+                // First check for Friday/Saturday restriction
+                if (response.message && response.message.includes('not available on Fridays and Saturdays')) {
                     $('#timeSlotsGrid').html(`
                         <div class="col-span-full text-center py-8 text-gray-500">
                             <i class="fas fa-calendar-times fa-2x mb-3"></i>
@@ -282,104 +267,136 @@ $(document).ready(function() {
                     return;
                 }
                 
-                // Check if no time slots are available
-                if (!response.timeSlots || response.timeSlots.length === 0) {
-                    let message = response.message || 'No time slots available for selected date';
-                    $('#timeSlotsGrid').html(`
-                        <div class="col-span-full text-center py-8 text-gray-500">
-                            <i class="fas fa-calendar-times fa-2x mb-3"></i>
-                            <p>${message}</p>
-                        </div>
-                    `);
+                // Then check for other messages
+                if (response.message) {
+                    showInfoMessage(response.message);
+                    return;
+                }
+                
+                // Ensure we have timeSlots array
+                if (!response.timeSlots || !Array.isArray(response.timeSlots)) {
+                    showErrorMessage('Invalid time slots data received');
+                    return;
+                }
+                
+                // Filter out any invalid slots
+                const validSlots = response.timeSlots.filter(slot => 
+                    slot && 
+                    slot.id && 
+                    slot.time_slot && 
+                    typeof slot.available_seats === 'number'
+                );
+
+                if (validSlots.length === 0) {
+                    showInfoMessage('No valid time slots available');
                     return;
                 }
 
                 // Display available time slots
-                let timeSlotsHtml = '';
-                
-                response.timeSlots.forEach(slot => {
-                    timeSlotsHtml += `
-                        <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                            <h3 class="font-medium text-lg mb-3 text-gray-800">
-                                <i class="far fa-clock mr-2"></i>
-                                ${slot.time_slot}
-                            </h3>
-                            <div class="grid grid-cols-5 gap-2">
-                    `;
-                    
-                    // Generate 15 seats
-                    for (let seat = 1; seat <= 15; seat++) {
-                        const isBooked = slot.bookings.some(b => b.seat === seat);
-                        const bookingInfo = slot.bookings.find(b => b.seat === seat);
-                        
-                        if (isBooked) {
-                            timeSlotsHtml += `
-                                <div class="seat booked bg-red-600 text-[#ffffff] rounded cursor-not-allowed relative"
-                                     title="Booked by ${bookingInfo?.std_id || 'another student'}">
-                                    <i class="fas fa-laptop laptop-icon"></i>
-                                    <span class="seat-number">${seat}</span>
-                                </div>
-                            `;
-                        } else {
-                            timeSlotsHtml += `
-                                <div class="seat available bg-green-500 text-white rounded cursor-pointer relative"
-                                     data-seat="${seat}" 
-                                     data-time-slot="${slot.id}"
-                                     data-time-slot-name="${slot.time_slot}">
-                                    <i class="fas fa-laptop laptop-icon"></i>
-                                    <span class="seat-number">${seat}</span>
-                                </div>
-                            `;
-                        }
-                    }
-                    
-                    timeSlotsHtml += `
-                            </div>
-                            <div class="mt-2 text-sm text-gray-600">
-                                Available seats: ${slot.available_seats}/15
-                            </div>
-                        </div>
-                    `;
-                });
-                
-                $('#timeSlotsGrid').html(timeSlotsHtml);
-                
-                // Rebind click events for available seats
-                $('.seat.available').on('click', function() {
-                    const timeSlotId = $(this).data('time-slot');
-                    const timeSlotName = $(this).data('time-slot-name');
-                    const seat = $(this).data('seat');
-                    const date = $('.date-btn.active').data('date');
-                    const formattedDate = new Date(date).toLocaleDateString('en-US', { 
-                        weekday: 'short', 
-                        month: 'short', 
-                        day: 'numeric' 
-                    });
-                    
-                    $('#modalDate').val(date);
-                    $('#modalTimeSlot').val(timeSlotId);
-                    $('#modalSeat').val(seat);
-                    $('#selectedSlotInfo').text(`${timeSlotName} • ${formattedDate}`);
-                    $('#selectedSeatInfo').text(`Seat ${seat}`);
-                    $('#studentId').val('').focus();
-                    $('#studentMessage').text('').removeClass('text-green-600 text-red-600');
-                    $('#bookingModal').removeClass('hidden');
-                });
+                renderTimeSlots(validSlots);
             },
             error: function(xhr, status, error) {
                 console.error('AJAX Error:', status, error, xhr.responseText);
-                
-                $('#timeSlotsGrid').html(`
-                    <div class="col-span-full text-center py-8 text-red-500">
-                        <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
-                        <p>Error loading time slots. Please try again.</p>
-                        <button onclick="loadTimeSlots('${date}')" class="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-                            Retry
-                        </button>
-                    </div>
-                `);
+                showErrorMessage('Error loading time slots. Please try again.');
             }
         });
+    }
+
+    function renderTimeSlots(slots) {
+        let timeSlotsHtml = '';
+        
+        slots.forEach(slot => {
+            timeSlotsHtml += `
+                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <h3 class="font-medium text-lg mb-3 text-gray-800">
+                        <i class="far fa-clock mr-2"></i>
+                        ${slot.time_slot}
+                    </h3>
+                    <div class="grid grid-cols-5 gap-2">
+            `;
+            
+            // Generate 15 seats
+            for (let seat = 1; seat <= 15; seat++) {
+                const isBooked = slot.bookings && slot.bookings.some(b => b.seat === seat);
+                const bookingInfo = slot.bookings && slot.bookings.find(b => b.seat === seat);
+                
+                if (isBooked) {
+                    timeSlotsHtml += `
+                        <div class="seat booked bg-red-600 text-white rounded cursor-not-allowed relative"
+                             title="Booked by ${bookingInfo?.std_id || 'another student'}">
+                            <i class="fas fa-laptop laptop-icon"></i>
+                            <span class="seat-number">${seat}</span>
+                        </div>
+                    `;
+                } else {
+                    timeSlotsHtml += `
+                        <div class="seat available bg-green-500 text-white rounded cursor-pointer relative"
+                             data-seat="${seat}" 
+                             data-time-slot="${slot.id}"
+                             data-time-slot-name="${slot.time_slot}">
+                            <i class="fas fa-laptop laptop-icon"></i>
+                            <span class="seat-number">${seat}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            timeSlotsHtml += `
+                    </div>
+                    <div class="mt-2 text-sm text-gray-600">
+                        Available seats: ${slot.available_seats}/15
+                    </div>
+                </div>
+            `;
+        });
+        
+        $('#timeSlotsGrid').html(timeSlotsHtml);
+        bindSeatClickEvents();
+    }
+
+    function bindSeatClickEvents() {
+        $('.seat.available').on('click', function() {
+            const timeSlotId = $(this).data('time-slot');
+            const timeSlotName = $(this).data('time-slot-name');
+            const seat = $(this).data('seat');
+            const date = $('.date-btn.active').data('date');
+            const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                weekday: 'short', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            
+            $('#modalDate').val(date);
+            $('#modalTimeSlot').val(timeSlotId);
+            $('#modalSeat').val(seat);
+            $('#selectedSlotInfo').text(`${timeSlotName} • ${formattedDate}`);
+            $('#selectedSeatInfo').text(`Seat ${seat}`);
+            $('#studentId').val('').focus();
+            $('#studentMessage').text('').removeClass('text-green-600 text-red-600');
+            $('#bookingModal').removeClass('hidden');
+        });
+    }
+
+    function showInfoMessage(message) {
+        $('#timeSlotsGrid').html(`
+            <div class="col-span-full text-center py-8 text-gray-500">
+                <i class="fas fa-calendar-times fa-2x mb-3"></i>
+                <p>${message}</p>
+            </div>
+        `);
+    }
+
+    function showErrorMessage(message) {
+        const currentDate = $('.date-btn.active').data('date');
+        $('#timeSlotsGrid').html(`
+            <div class="col-span-full text-center py-8 text-red-500">
+                <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
+                <p>${message}</p>
+                <button onclick="loadTimeSlots('${currentDate}')" class="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                    Retry
+                </button>
+            </div>
+        `);
     }
     
     // Student ID validation
@@ -434,117 +451,64 @@ $(document).ready(function() {
     });
     
     // Form submission
-    // $('#bookSeatForm').on('submit', function(e) {
-    //     e.preventDefault();
+    $('#bookSeatForm').on('submit', function(e) {
+        e.preventDefault();
         
-    //     const submitBtn = $('#submitBtn');
-    //     const originalBtnText = submitBtn.html();
+        const submitBtn = $('#submitBtn');
+        const originalBtnText = submitBtn.html();
+        const statusMessage = $('#bookingStatusMessage');
         
-    //     submitBtn.prop('disabled', true);
-    //     submitBtn.html(`
-    //         <i class="fas fa-spinner animate-spin mr-2"></i>
-    //         Processing...
-    //     `);
+        submitBtn.prop('disabled', true);
+        submitBtn.html(`
+            <i class="fas fa-spinner animate-spin mr-2"></i>
+            Processing...
+        `);
+        statusMessage.addClass('hidden').removeClass('bg-green-100 border-green-500 text-green-700 bg-red-100 border-red-500 text-red-700');
         
-    //     $.ajax({
-    //         url: '{{ route("booking.book-seat") }}',
-    //         method: 'POST',
-    //         data: $(this).serialize(),
-    //         success: function(response) {
-    //             $('#messageContainer').removeClass('hidden bg-red-100 border-red-500 text-red-700')
-    //                                 .addClass('bg-green-100 border-l-4 border-green-500 text-green-700')
-    //                                 .html(`
-    //                                     <div class="flex items-center">
-    //                                         <i class="fas fa-check-circle mr-2"></i>
-    //                                         <p>${response.success}</p>
-    //                                     </div>
-    //                                 `);
+        $.ajax({
+            url: '{{ route("booking.book-seat") }}',
+            method: 'POST',
+            data: $(this).serialize(),
+            success: function(response) {
+                statusMessage.removeClass('hidden')
+                    .addClass('bg-green-100 border-l-4 border-green-500 text-green-700')
+                    .html(`
+                        <div class="flex items-center">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            <p>${response.success}</p>
+                        </div>
+                    `);
                 
-    //             $('#bookingModal').addClass('hidden');
+                // Clear form and close modal after 2 seconds
+                setTimeout(() => {
+                    $('#bookingModal').addClass('hidden');
+                    $('#studentId').val('');
+                    statusMessage.addClass('hidden');
+                    
+                    // Refresh the slots after booking
+                    loadTimeSlots($('#modalDate').val());
+                }, 2000);
+            },
+            error: function(xhr) {
+                let errorMessage = 'Failed to book seat. Please try again.';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    errorMessage = xhr.responseJSON.error;
+                }
                 
-    //             // Refresh the slots after booking
-    //             loadTimeSlots($('#modalDate').val());
-    //         },
-    //         error: function(xhr) {
-    //             let errorMessage = 'You already booked on this date';
-    //             if (xhr.responseJSON && xhr.responseJSON.error) {
-    //                 errorMessage = xhr.responseJSON.error;
-    //             }
-                
-    //             $('#messageContainer').removeClass('hidden bg-green-100 border-green-500 text-green-700')
-    //                                 .addClass('bg-red-100 border-l-4 border-red-500 text-red-700')
-    //                                 .html(`
-    //                                     <div class="flex items-center">
-    //                                         <i class="fas fa-exclamation-circle mr-2"></i>
-    //                                         <p>${errorMessage}</p>
-    //                                     </div>
-    //                                 `);
-    //         },
-    //         complete: function() {
-    //             submitBtn.prop('disabled', false).html(originalBtnText);
-    //         }
-    //     });
-    // });
-
-    // Form submission
-$('#bookSeatForm').on('submit', function(e) {
-    e.preventDefault();
-    
-    const submitBtn = $('#submitBtn');
-    const originalBtnText = submitBtn.html();
-    const statusMessage = $('#bookingStatusMessage');
-    
-    submitBtn.prop('disabled', true);
-    submitBtn.html(`
-        <i class="fas fa-spinner animate-spin mr-2"></i>
-        Processing...
-    `);
-    statusMessage.addClass('hidden').removeClass('bg-green-100 border-green-500 text-green-700 bg-red-100 border-red-500 text-red-700');
-    
-    $.ajax({
-        url: '{{ route("booking.book-seat") }}',
-        method: 'POST',
-        data: $(this).serialize(),
-        success: function(response) {
-            statusMessage.removeClass('hidden')
-                .addClass('bg-green-100 border-l-4 border-green-500 text-green-700')
-                .html(`
-                    <div class="flex items-center">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <p>${response.success}</p>
-                    </div>
-                `);
-            
-            // Clear form and close modal after 2 seconds
-            setTimeout(() => {
-                $('#bookingModal').addClass('hidden');
-                $('#studentId').val('');
-                statusMessage.addClass('hidden');
-                
-                // Refresh the slots after booking
-                loadTimeSlots($('#modalDate').val());
-            }, 2000);
-        },
-        error: function(xhr) {
-            let errorMessage = 'You already have a booking for this date.';
-            if (xhr.responseJSON && xhr.responseJSON.error) {
-                errorMessage = xhr.responseJSON.error;
+                statusMessage.removeClass('hidden')
+                    .addClass('bg-red-100 border-l-4 border-red-500 text-red-700')
+                    .html(`
+                        <div class="flex items-center">
+                            <i class="fas fa-exclamation-circle mr-2"></i>
+                            <p>${errorMessage}</p>
+                        </div>
+                    `);
+            },
+            complete: function() {
+                submitBtn.prop('disabled', false).html(originalBtnText);
             }
-            
-            statusMessage.removeClass('hidden')
-                .addClass('bg-red-100 border-l-4 border-red-500 text-red-700')
-                .html(`
-                    <div class="flex items-center">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
-                        <p>${errorMessage}</p>
-                    </div>
-                `);
-        },
-        complete: function() {
-            submitBtn.prop('disabled', false).html(originalBtnText);
-        }
+        });
     });
-});
 });
     </script>
 </body>
