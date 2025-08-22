@@ -53,8 +53,8 @@ class FrontendBookingController extends Controller
                 ]);
             }
 
-            // Check if it's TUESDAY and disable 11am-12pm and 12pm-1pm slots
-            if ($dayOfWeek === Carbon::TUESDAY) {
+            // Check if it's TUESDAY, SUNDAY and disable 11am-12pm and 12pm-1pm slots
+            if ($dayOfWeek === Carbon::TUESDAY || $dayOfWeek === Carbon::SUNDAY) {
                 $timeSlots = $timeSlots->filter(function($slot) {
                     return !in_array($slot->time_slot, ['11am-12pm', '12pm-1pm']);
                 });
@@ -63,7 +63,38 @@ class FrontendBookingController extends Controller
                     return response()->json([
                         'timeSlots' => [],
                         'date' => $formattedDate,
-                        'message' => 'No time slots available on TUESDAY between 11 AM to 1 PM'
+                        'message' => 'No time slots available on TUESDAY & SUNDAY between 11 AM to 1 PM'
+                    ]);
+                }
+            }
+
+            // Check if it's WEDNESDAY and disable 1pm-2pm and 2pm-3pm slots
+            if ($dayOfWeek === Carbon::WEDNESDAY) {
+                $timeSlots = $timeSlots->filter(function($slot) {
+                    return !in_array($slot->time_slot, ['1pm-2pm','2pm-3pm']);
+                });
+                
+                if ($timeSlots->isEmpty()) {
+                    return response()->json([
+                        'timeSlots' => [],
+                        'date' => $formattedDate,
+                        'message' => 'No time slots available on WEDNESDAY between 1 PM to 3 PM'
+                    ]);
+                }
+            }
+
+
+            // Check if it's THURSDAY and Available 1pm-2pm and 2pm-3pm slots
+            if ($dayOfWeek === Carbon::THURSDAY) {
+                $timeSlots = $timeSlots->filter(function($slot) {
+                    return !in_array($slot->time_slot, ['11am-12pm','12pm-1pm', '3pm-4pm','4pm-5pm', '6pm-7pm','7pm-8pm']);
+                });
+                
+                if ($timeSlots->isEmpty()) {
+                    return response()->json([
+                        'timeSlots' => [],
+                        'date' => $formattedDate,
+                        'message' => 'No time slots available on THURSDAY between 11 AM to 1 PM AND 3PM to 8PM'
                     ]);
                 }
             }
@@ -142,12 +173,31 @@ class FrontendBookingController extends Controller
             ], 422);
         }
 
-        // Check if it's TUESDAY and trying to book restricted slots
-        if ($bookingDate->dayOfWeek === Carbon::TUESDAY) {
+        // Check if it's TUESDAY,SUNDAY and trying to book restricted slots
+        if ($bookingDate->dayOfWeek === Carbon::TUESDAY || $dayOfWeek === Carbon::SUNDAY) {
             $timeSlot = TimeSlot::find($request->time_slot_id);
             if (in_array($timeSlot->time_slot, ['11am-12pm', '12pm-1pm'])) {
                 return response()->json([
-                    'error' => 'Booking is not available on TUESDAY between 11 AM to 1 PM'
+                    'error' => 'Booking is not available on TUESDAY & SUNDAY between 11 AM to 1 PM'
+                ], 422);
+            }
+        }
+
+         // Check if it's WEDNESDAY and trying to book restricted slots
+        if ($dayOfWeek === Carbon::WEDNESDAY ) {
+            $timeSlot = TimeSlot::find($request->time_slot_id);
+            if (in_array($timeSlot->time_slot, ['1pm-2pm','2pm-3pm'])) {
+                return response()->json([
+                    'error' => 'Booking is not available on WEDNESDAY between 1 PM to 3 PM'
+                ], 422);
+            }
+        }
+         // Check if it's THURSDAY and trying to book restricted slots
+        if ($dayOfWeek === Carbon::THURSDAY ) {
+            $timeSlot = TimeSlot::find($request->time_slot_id);
+            if (in_array($timeSlot->time_slot, ['11am-12pm','12pm-1pm', '3pm-4pm','4pm-5pm', '6pm-7pm','7pm-8pm'])) {
+                return response()->json([
+                    'error' => 'Booking is not available on THURSDAY between 11 AM to 1 PM AND 3PM to 8PM'
                 ], 422);
             }
         }
