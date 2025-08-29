@@ -53,10 +53,11 @@ class FrontendBookingController extends Controller
                 ]);
             }
 
-            // Check if it's TUESDAY, SUNDAY and disable 11am-12pm and 12pm-1pm slots
+            // Check if it's TUESDAY, SUNDAY and disable 11am-1pm slots
             if ($dayOfWeek === Carbon::TUESDAY || $dayOfWeek === Carbon::SUNDAY) {
                 $timeSlots = $timeSlots->filter(function($slot) {
-                    return !in_array($slot->time_slot, ['11am-12pm', '12pm-1pm']);
+                    // return !in_array($slot->time_slot, ['11am-12pm', '12pm-1pm']);
+                    return !in_array($slot->time_slot, ['11am-1pm']);
                 });
                 
                 if ($timeSlots->isEmpty()) {
@@ -68,10 +69,10 @@ class FrontendBookingController extends Controller
                 }
             }
 
-            // Check if it's WEDNESDAY and disable 1pm-2pm and 2pm-3pm slots
+            // Check if it's WEDNESDAY and disable 1pm-3pm slots
             if ($dayOfWeek === Carbon::WEDNESDAY) {
                 $timeSlots = $timeSlots->filter(function($slot) {
-                    return !in_array($slot->time_slot, ['1pm-2pm','2pm-3pm']);
+                    return !in_array($slot->time_slot, ['1pm-3pm']);
                 });
                 
                 if ($timeSlots->isEmpty()) {
@@ -84,17 +85,17 @@ class FrontendBookingController extends Controller
             }
 
 
-            // Check if it's THURSDAY and Available 1pm-2pm and 2pm-3pm slots
+            // Check if it's THURSDAY and Available 3pm-5pm slots
             if ($dayOfWeek === Carbon::THURSDAY) {
                 $timeSlots = $timeSlots->filter(function($slot) {
-                    return !in_array($slot->time_slot, ['11am-12pm','12pm-1pm', '3pm-4pm','4pm-5pm', '6pm-7pm','7pm-8pm']);
+                    return !in_array($slot->time_slot, ['3pm-5pm']);
                 });
                 
                 if ($timeSlots->isEmpty()) {
                     return response()->json([
                         'timeSlots' => [],
                         'date' => $formattedDate,
-                        'message' => 'No time slots available on THURSDAY between 11 AM to 1 PM AND 3PM to 8PM'
+                        'message' => 'No time slots available on THURSDAY between 3PM to 5PM'
                     ]);
                 }
             }
@@ -149,57 +150,59 @@ class FrontendBookingController extends Controller
 
     public function bookSeat(Request $request)
     {
-       $request->validate([
-            'date' => 'required|date|after_or_equal:today',
-            'time_slot_id' => 'required|exists:time_slots,id',
-            'seat' => 'required|integer|between:1,15',
-            'std_id' => [
-                'required',
-                'string',
-                function ($attribute, $value, $fail) {
-                    if (!Student::where('std_id', $value)->exists()) {
-                        $fail('The student ID does not exist in our records.');
-                    }
+      $request->validate([
+        'date' => 'required|date|after_or_equal:today',
+        'time_slot_id' => 'required|exists:time_slots,id',
+        'seat' => 'required|integer|between:1,15',
+        'std_id' => [
+            'required',
+            'string',
+            function ($attribute, $value, $fail) {
+                if (!Student::where('std_id', $value)->exists()) {
+                    $fail('The student ID does not exist in our records.');
                 }
-            ],
-        ]);
+            }
+        ],
+    ]);
 
-        $bookingDate = Carbon::parse($request->date);
-        
-        // Check if date is Friday or Saturday
-        if ($bookingDate->dayOfWeek === Carbon::FRIDAY || $bookingDate->dayOfWeek === Carbon::SATURDAY) {
+    $bookingDate = Carbon::parse($request->date);
+    $dayOfWeek = $bookingDate->dayOfWeek; // Define this variable
+    
+    // Check if date is Friday or Saturday
+    if ($dayOfWeek === Carbon::FRIDAY || $dayOfWeek === Carbon::SATURDAY) {
+        return response()->json([
+            'error' => 'Booking is not available on Fridays and Saturdays'
+        ], 422);
+    }
+
+    // Check if it's TUESDAY,SUNDAY and trying to book restricted slots
+    if ($dayOfWeek === Carbon::TUESDAY || $dayOfWeek === Carbon::SUNDAY) {
+        $timeSlot = TimeSlot::find($request->time_slot_id);
+        if (in_array($timeSlot->time_slot, ['11am-1pm'])) {
             return response()->json([
-                'error' => 'Booking is not available on Fridays and Saturdays'
+                'error' => 'Booking is not available on TUESDAY & SUNDAY between 11 AM to 1 PM'
             ], 422);
         }
+    }
 
-        // Check if it's TUESDAY,SUNDAY and trying to book restricted slots
-        if ($bookingDate->dayOfWeek === Carbon::TUESDAY || $dayOfWeek === Carbon::SUNDAY) {
-            $timeSlot = TimeSlot::find($request->time_slot_id);
-            if (in_array($timeSlot->time_slot, ['11am-12pm', '12pm-1pm'])) {
-                return response()->json([
-                    'error' => 'Booking is not available on TUESDAY & SUNDAY between 11 AM to 1 PM'
-                ], 422);
-            }
+    // Check if it's WEDNESDAY and trying to book restricted slots
+    if ($dayOfWeek === Carbon::WEDNESDAY ) {
+        $timeSlot = TimeSlot::find($request->time_slot_id);
+        if (in_array($timeSlot->time_slot, ['1pm-3pm'])) {
+            return response()->json([
+                'error' => 'Booking is not available on WEDNESDAY between 1 PM to 3 PM'
+            ], 422);
         }
-
-         // Check if it's WEDNESDAY and trying to book restricted slots
-        if ($dayOfWeek === Carbon::WEDNESDAY ) {
-            $timeSlot = TimeSlot::find($request->time_slot_id);
-            if (in_array($timeSlot->time_slot, ['1pm-2pm','2pm-3pm'])) {
-                return response()->json([
-                    'error' => 'Booking is not available on WEDNESDAY between 1 PM to 3 PM'
-                ], 422);
-            }
+    }
+    
+    // Check if it's THURSDAY and trying to book restricted slots
+    if ($dayOfWeek === Carbon::THURSDAY ) {
+        $timeSlot = TimeSlot::find($request->time_slot_id);
+        if (in_array($timeSlot->time_slot, ['3pm-5pm'])) {
+            return response()->json([
+                'error' => 'Booking is not available on THURSDAY between 3PM to 5PM'
+            ], 422);
         }
-         // Check if it's THURSDAY and trying to book restricted slots
-        if ($dayOfWeek === Carbon::THURSDAY ) {
-            $timeSlot = TimeSlot::find($request->time_slot_id);
-            if (in_array($timeSlot->time_slot, ['11am-12pm','12pm-1pm', '3pm-4pm','4pm-5pm', '6pm-7pm','7pm-8pm'])) {
-                return response()->json([
-                    'error' => 'Booking is not available on THURSDAY between 11 AM to 1 PM AND 3PM to 8PM'
-                ], 422);
-            }
         }
 
         // Check if time slot is active
