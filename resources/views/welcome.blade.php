@@ -105,6 +105,21 @@
     <main class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Book Your Seat</h2>
+
+            <!-- Location Information -->
+            <div class="mb-8 bg-gray-50 p-5 rounded-lg border border-blue-200">
+               
+                <div class="flex flex-col md:flex-row gap-6">
+                    <div class="flex-1">
+                        <p class="font-medium text-gray-800 mb-1">Training Room-6 (Lab)</p>
+                        <p class="text-gray-600"><i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>Jamuna Bank Building (lift-6), C&B Road, Narsingdi Sadar.</p>
+                        <p class="text-gray-600">
+                            <i class="fas fa-phone text-blue-600 mr-2"></i>
+                            <b>Contact:</b> 019014-02203
+                        </p>
+                    </div>
+                </div>
+            </div>
             
             <!-- Date Selection -->
             <div class="mb-8">
