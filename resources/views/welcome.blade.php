@@ -67,6 +67,9 @@
         .seat-map-container {
             min-height: 300px;
         }
+        .icon-red {
+            color: #ed2227;
+        }
         .date-btn.active {
             background-color: #ed2227;
             color: white;
@@ -107,14 +110,14 @@
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Book Your Seat</h2>
 
             <!-- Location Information -->
-            <div class="mb-8 bg-gray-50 p-5 rounded-lg border border-blue-200">
+            <div class="mb-8 bg-gray-50 p-5 rounded-lg border border-gray-200">
                
                 <div class="flex flex-col md:flex-row gap-6">
                     <div class="flex-1">
-                        <p class="font-medium text-gray-800 mb-1">Training Room-6 (Lab)</p>
-                        <p class="text-gray-600"><i class="fas fa-map-marker-alt text-blue-600 mr-2"></i>Jamuna Bank Building (lift-6), C&B Road, Narsingdi Sadar.</p>
+                        <p class="font-medium icon-red mb-1">Training Room-6 (Lab)</p>
+                        <p class="text-gray-600"><i class="fas fa-map-marker-alt icon-red mr-2"></i>Jamuna Bank Building (lift-6), C&B Road, Narsingdi Sadar.</p>
                         <p class="text-gray-600">
-                            <i class="fas fa-phone text-blue-600 mr-2"></i>
+                            <i class="fas fa-phone icon-red mr-2"></i>
                             <b>Contact:</b> 019014-02203
                         </p>
                     </div>
