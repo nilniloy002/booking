@@ -334,7 +334,8 @@
             `;
             
             // Generate 15 seats
-            for (let seat = 1; seat <= 15; seat++) {
+            //for (let seat = 1; seat <= 15; seat++) {
+            for (let seat = 1; seat <= 13; seat++) {
                 const isBooked = slot.bookings && slot.bookings.some(b => b.seat === seat);
                 const bookingInfo = slot.bookings && slot.bookings.find(b => b.seat === seat);
                 
@@ -362,7 +363,7 @@
             timeSlotsHtml += `
                     </div>
                     <div class="mt-2 text-sm text-gray-600">
-                        Available seats: ${slot.available_seats}/15
+                        Available seats: ${slot.available_seats}/13
                     </div>
                 </div>
             `;
