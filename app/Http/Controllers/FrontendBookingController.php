@@ -171,7 +171,8 @@ class FrontendBookingController extends Controller
             }
 
             // For Monday-Thursday: Filter only the specified time slots
-            $allowedSlots = ['11am-1pm', '1pm-3pm', '3pm-5pm', '5pm-7pm'];
+            // $allowedSlots = ['11am-1pm', '1pm-3pm', '3pm-5pm', '5pm-7pm'];
+            $allowedSlots = ['10am-12pm', '12pm-2pm', '2pm-4pm'];
             $timeSlots = $timeSlots->filter(function($slot) use ($allowedSlots) {
                 return in_array($slot->time_slot, $allowedSlots);
             });
@@ -390,7 +391,9 @@ class FrontendBookingController extends Controller
         }
 
         // For Monday-Thursday: Check if the time slot is allowed
-        $allowedSlots = ['11am-1pm', '1pm-3pm', '3pm-5pm', '5pm-7pm'];
+        // $allowedSlots = ['11am-1pm', '1pm-3pm', '3pm-5pm', '5pm-7pm'];
+        $allowedSlots = ['10am-12pm', '12pm-2pm', '2pm-4pm'];
+
         if (!in_array($timeSlot->time_slot, $allowedSlots)) {
             return response()->json([
                 'error' => 'This time slot is not available for booking on weekdays'
