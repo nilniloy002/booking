@@ -96,7 +96,7 @@
     <header class="bg-[#1C2A39] text-white shadow-md">
         <div class="container mx-auto px-4 py-4">
             <div class="flex flex-col items-center justify-center">
-                <img src="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png" 
+                <img src="https://sourceforces-img.sgp1.cdn.digitaloceanspaces.com/sts-logo.png" 
                      alt="CD-IELTS Logo" 
                      class="h-16 mb-2">
                 <h1 class="text-2xl font-bold text-center">IELTS on Computer LAB Booking System</h1>
