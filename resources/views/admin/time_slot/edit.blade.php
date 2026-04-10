@@ -16,6 +16,23 @@
                         <option value="off" {{ $timeSlot->status === 'off' ? 'selected' : '' }}>Off</option>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label>Available Days</label>
+                    <div class="row">
+                        @foreach($daysOfWeek as $key => $day)
+                            <div class="col-md-3">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="day_of_week[]" value="{{ $key }}"
+                                            {{ is_array($timeSlot->day_of_week) && in_array($key, $timeSlot->day_of_week) ? 'checked' : '' }}>
+                                        {{ $day }}
+                                    </label>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                    <small class="form-text text-muted">Select at least one day when this time slot is available</small>
+                </div>
                 <button type="submit" class="btn btn-primary">Update</button>
             </form>
         </div>

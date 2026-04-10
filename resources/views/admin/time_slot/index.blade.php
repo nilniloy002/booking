@@ -14,6 +14,7 @@
                         <th>#</th>
                         <th>Time Slot</th>
                         <th>Status</th>
+                        <th>Available Days</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -22,7 +23,14 @@
                         <tr>
                             <td>{{ $loop->iteration }}</td>
                             <td>{{ $timeSlot->time_slot }}</td>
-                            <td>{{ ucfirst($timeSlot->status) }}</td>
+                            <td>
+                                @if($timeSlot->status === 'on')
+                                    <span class="badge badge-success">On</span>
+                                @else
+                                    <span class="badge badge-danger">Off</span>
+                                @endif
+                            </td>
+                            <td>{{ $timeSlot->formatted_days }}</td>
                             <td>
                                 <a href="{{ route('admin.time_slot.edit', $timeSlot) }}" class="btn btn-sm btn-primary">Edit</a>
                                 <form action="{{ route('admin.time_slot.destroy', $timeSlot) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure?')">
